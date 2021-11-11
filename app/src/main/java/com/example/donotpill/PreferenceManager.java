@@ -33,7 +33,7 @@ public class PreferenceManager {
 
     }
 
-    public void setRooms(Context context, String uid, ArrayList<String> rooms){
+    public void setRooms(Context context, String uid, ArrayList<Room> rooms){
 
         SharedPreferences prefs = getPreferences(context);
 
@@ -42,7 +42,7 @@ public class PreferenceManager {
         JSONArray a = new JSONArray();
         Gson gson =new GsonBuilder().create();
         for (int i = 0; i < rooms.size(); i++) {
-            String string = rooms.get(i).toString();
+            String string = gson.toJson(rooms.get(i),Room.class);
             a.put(string);
         }
         if (!rooms.isEmpty()) {
@@ -56,21 +56,19 @@ public class PreferenceManager {
 
     }
 
-    public ArrayList<String> getRooms(Context context, String uid){
+    public ArrayList<Room> getRooms(Context context, String uid){
         SharedPreferences prefs = getPreferences(context);
         String json = prefs.getString(uid, null);
-        User user = new User();
 
         SharedPreferences.Editor editor = prefs.edit();
         Gson gson =new GsonBuilder().create();
-
-        ArrayList<String> rooms = new ArrayList<>();
+        ArrayList<Room> rooms = new ArrayList<>();
 
         if (json != null) {
             try {
                 JSONArray a = new JSONArray(json);
                 for (int i = 0; i < a.length(); i++) {
-                    String info= a.get(i).toString();
+                    Room info= gson.fromJson(a.get(i).toString(),Room.class);
                     rooms.add(info);
                 }
             } catch (JSONException e) {

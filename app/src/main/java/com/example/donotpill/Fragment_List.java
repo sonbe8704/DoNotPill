@@ -17,16 +17,20 @@ public class Fragment_List extends Fragment {
     private View view;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
+    private MainActivity mainActivity;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment__list, container, false);
+
         //RecyclerView
         recyclerView  = view.findViewById(R.id.rv_frag1);
         linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
+
+
         return view;
     }
 }

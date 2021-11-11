@@ -3,13 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/sonbe/AndroidStudioProjects/DoNotPill/app/src/main/res/drawable/bottom_sheet.xml" value="0.3758974358974359" />
         <entry key="..\:/Users/sonbe/AndroidStudioProjects/DoNotPill/app/src/main/res/layout/activity_main.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/sonbe/AndroidStudioProjects/DoNotPill/app/src/main/res/layout/dialog_addbottomsheet.xml" value="0.33" />
         <entry key="..\:/Users/sonbe/AndroidStudioProjects/DoNotPill/app/src/main/res/layout/fragment__list.xml" value="0.36614583333333334" />
-        <entry key="..\:/Users/sonbe/AndroidStudioProjects/DoNotPill/app/src/main/res/menu/actionbar_main.xml" value="0.1" />
+        <entry key="..\:/Users/sonbe/AndroidStudioProjects/DoNotPill/app/src/main/res/layout/item_rv_frag_list.xml" value="0.33" />
+        <entry key="..\:/Users/sonbe/AndroidStudioProjects/DoNotPill/app/src/main/res/menu/actionbar_main.xml" value="0.22" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
