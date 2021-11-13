@@ -16,6 +16,10 @@ import android.widget.TimePicker;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class Dialog_AddBottomSheet extends Dialog {
     private TimePicker tp_start;
     private EditText et_title;
@@ -24,6 +28,7 @@ public class Dialog_AddBottomSheet extends Dialog {
     private TextView tv_confirm,tv_cancle;
     private RadioButton rb_mon,rb_tue,rb_wed,rb_thu,rb_fri,rb_sat,rb_sun;
     private OnButtonClickListener listener;
+    private FirebaseFirestore mStore;
     public Dialog_AddBottomSheet(@NonNull Context context) {
         super(context);
     }
@@ -36,6 +41,7 @@ public class Dialog_AddBottomSheet extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_addbottomsheet);
+        mStore = FirebaseFirestore.getInstance();
         et_title = findViewById(R.id.et_title);
         tp_start = findViewById(R.id.tp_start);
         sp_dist=findViewById(R.id.sp_dist);
@@ -55,6 +61,7 @@ public class Dialog_AddBottomSheet extends Dialog {
             @Override
             public void onClick(View v) {
                 String title = et_title.getText().toString();
+                String id = mStore.collection("Rooms").document().getId();
                 int hour = tp_start.getHour();
                 int min = tp_start.getMinute();
                 int boundary = sp_time.getSelectedItemPosition()+1;
@@ -67,9 +74,14 @@ public class Dialog_AddBottomSheet extends Dialog {
                 day[5]=rb_sat.isChecked();
                 day[6]=rb_sun.isChecked();
                 int dist = sp_dist.getSelectedItemPosition()+1;
-                Room room = new Room(title,hour,min,boundary,day,dist);
-                listener.onConfirmClick(room);
-                dismiss();
+                Room room = new Room(id,title,hour,min,boundary,day,dist,true);
+                mStore.collection("Rooms").document(id).set(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        listener.onConfirmClick(room);
+                        dismiss();
+                    }
+                });
             }
         });
         tv_cancle.setOnClickListener(new View.OnClickListener() {

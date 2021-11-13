@@ -109,4 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public ArrayList<Room> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(ArrayList<Room> rooms) {
+        this.rooms = rooms;
+    }
 }

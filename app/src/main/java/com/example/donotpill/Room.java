@@ -2,15 +2,42 @@ package com.example.donotpill;
 
 public class Room {
     String Id;
+    String title;
     int hour;
     int min;
     int boundary;
     boolean []day;
     int dist;
+    boolean on;
 
-    public String getId() {
-        return Id;
+    public Room(String id,String title, int hour, int min, int boundary, boolean[] day, int dist, boolean on) {
+        this.Id = id;
+        this.title = title;
+        this.hour = hour;
+        this.min = min;
+        this.boundary = boundary;
+        this.day = day;
+        this.dist = dist;
+        this.on = on;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public boolean isOn() {
+        return on;
+    }
+
+    public void setOn(boolean onOff) {
+        this.on = on;
+    }
+
+    public String getId() { return Id; }
 
     public void setId(String id) {
         Id = id;
@@ -56,12 +83,5 @@ public class Room {
         this.dist = dist;
     }
 
-    public Room(String id, int hour, int min, int boundary, boolean[] day, int dist) {
-        Id = id;
-        this.hour = hour;
-        this.min = min;
-        this.boundary = boundary;
-        this.day = day;
-        this.dist = dist;
-    }
+
 }

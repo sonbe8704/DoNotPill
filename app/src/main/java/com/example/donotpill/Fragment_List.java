@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 
 public class Fragment_List extends Fragment {
 
@@ -17,20 +19,38 @@ public class Fragment_List extends Fragment {
     private View view;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
-    private MainActivity mainActivity;
-
-
+    private Adapter_Frag_List adapter_frag_list;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment__list, container, false);
-
         //RecyclerView
         recyclerView  = view.findViewById(R.id.rv_frag1);
         linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
+        adapter_frag_list = new Adapter_Frag_List(getRooms());
+        adapter_frag_list.setOnItemListener(new Adapter_Frag_List.OnItemClickListener() {
+            @Override
+            public void onConfirmClick(View v, int pos) {
+                //TODO: 메세지 발송하는 다이얼로그 띄우고 알람 끄기
+            }
 
+            @Override
+            public void onRadioClick(int pos) {
+                //TODO: 알람자체를 꺼버리고 레이아웃바꿔주기
+            }
 
+            @Override
+            public void onItemClick(View v, int pos) {
+                //TODO: 채팅방 들어가기
+            }
+        });
+        recyclerView.setAdapter(adapter_frag_list);
         return view;
     }
+
+    private ArrayList<Room> getRooms(){
+        return ((MainActivity)getActivity()).getRooms();
+    }
+
 }

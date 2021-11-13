@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "215259945953",
+    "project_id": "donotpill",
+    "storage_bucket": "donotpill.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:215259945953:android:22e9049729ef38eafc10a0",
+        "android_client_info": {
+          "package_name": "com.example.donotpill"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "215259945953-5vm92jsrcoi96tand3b5rjmj84i1vrvp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.donotpill",
+            "certificate_hash": "5221da7a5d357b780fc00b10e35b292b84cd61b3"
+          }
+        },
+        {
+          "client_id": "215259945953-ead26hqujc83hhj8n7th20mngk2cj7n4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADgAm1w2B_Yt0cDGOIiSWOyp0Qxq-FVqk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "215259945953-ead26hqujc83hhj8n7th20mngk2cj7n4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
