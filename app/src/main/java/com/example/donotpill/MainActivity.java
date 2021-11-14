@@ -106,43 +106,8 @@ public class MainActivity extends AppCompatActivity {
                 timePicker=addBottomSheetDialog.findViewById(R.id.tp_start);
 
 
-                ArrayList items_time = new ArrayList<>();
-                ArrayList items_dist = new ArrayList<>();
+                set_Spinners();
 
-                for(int i=1;i<=6;++i){
-                    items_time.add(i*30) ;
-                    items_dist.add(i*5);
-                }
-
-                ArrayAdapter<String> adapter_time = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items_time);
-                ArrayAdapter<String> adapter_dist = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items_dist);
-               // adapter.setDropDownViewResource(R.layout.spinner_item);
-
-                spinner_time.setAdapter(adapter_time);
-                spinner_time.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        sel_time= (int) items_time.get(position);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-
-                spinner_dist.setAdapter(adapter_dist);
-                spinner_dist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        sel_dist= (int) items_dist.get(position);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
 
                 //buttom complete
                 addBottomSheetDialog.findViewById(R.id.tv_confirm).setOnClickListener(new View.OnClickListener() {
@@ -179,8 +144,50 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setSpinner(){
+    private void set_Spinners(){
 
+        sel_time=0;
+        sel_dist=0;
+
+        ArrayList items_time = new ArrayList<>();
+        ArrayList items_dist = new ArrayList<>();
+
+        for(int i=1;i<=6;++i){
+            items_time.add(i*30) ;
+            items_dist.add(i*5);
+        }
+
+        ArrayAdapter<String> adapter_time = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items_time);
+        ArrayAdapter<String> adapter_dist = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items_dist);
+        // adapter.setDropDownViewResource(R.layout.spinner_item);
+
+        //spinner time set
+        spinner_time.setAdapter(adapter_time);
+        spinner_time.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sel_time= (int) items_time.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        //spinner dist set
+        spinner_dist.setAdapter(adapter_dist);
+        spinner_dist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sel_dist= (int) items_dist.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     public ArrayList<Room> getRooms() {
@@ -190,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
     public void setRooms(ArrayList<Room> rooms) {
         this.rooms = rooms;
     }
+
 
 
     public void regist() {
