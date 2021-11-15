@@ -4,14 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,9 +34,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.annotations.NotNull;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     TimePicker timePicker;
     private AlarmManager alarmManager;
     private int hour, minute;
+    private LocationManager locationManager;
+    private static final int REQUEST_CODE_LOCATION=2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,4 +238,53 @@ public class MainActivity extends AppCompatActivity {
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         alarmManager.cancel(pIntent);
     }
+
+    public Location getLocation(){
+        final LocationManager lm=(LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location ret = null;
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("////////////사용자에게 권한을 요청해야함");
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, this.REQUEST_CODE_LOCATION);
+            getLocation(); //이건 써도되고 안써도 되지만, 전 권한 승인하면 즉시 위치값 받아오려고 썼습니다!
+        }
+        else{
+            String locationProvider = LocationManager.GPS_PROVIDER;
+            ret = locationManager.getLastKnownLocation(locationProvider);
+        }
+        return ret;
+    }
+
+    public double getDistance(Location loc1, Location loc2){
+        double ret = loc1.distanceTo(loc2);
+        return ret;
+    }
+    public boolean isInBoundary(int boundary,double dist){
+        if((double)boundary>=dist)return true;
+        else return false;
+    }
+
+    public boolean isInTime(Room room){
+        int hour = room.getHour();
+        int min = room.getMin();
+        int sTime = 60*hour+min-room.getBoundary();
+        int eTime = 60*hour+min+room.getBoundary();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH",Locale.KOREA);
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        hour = Integer.parseInt(sdf.format(date));
+        sdf = new SimpleDateFormat("mm",Locale.KOREA);
+        min = Integer.parseInt(sdf.format(date));
+        hour=hour*60+min;
+
+        boolean [] days= room.getDay();
+        int mWeek = cal.get(Calendar.DAY_OF_WEEK);
+        //요일다르면 우선 패스
+        if(!days[mWeek])return false;
+        //시간범위안에 들어오면 on
+        if(sTime<=hour && eTime>=hour){
+            return true;
+        }
+        else return false;
+    }
+
 }
