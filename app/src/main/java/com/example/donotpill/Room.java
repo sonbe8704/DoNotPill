@@ -1,16 +1,18 @@
 package com.example.donotpill;
 
+import java.util.ArrayList;
+
 public class Room {
     String Id;
     String title;
     int hour;
     int min;
     int boundary;
-    boolean []day;
+    ArrayList<Boolean> day;
     int dist;
     boolean on;
 
-    public Room(String id,String title, int hour, int min, int boundary, boolean[] day, int dist, boolean on) {
+    public Room(String id,String title, int hour, int min, int boundary, ArrayList<Boolean> day, int dist, boolean on) {
         this.Id = id;
         this.title = title;
         this.hour = hour;
@@ -67,11 +69,11 @@ public class Room {
         this.boundary = boundary;
     }
 
-    public boolean[] getDay() {
+    public ArrayList<Boolean> getDay() {
         return day;
     }
 
-    public void setDay(boolean[] day) {
+    public void setDay(ArrayList<Boolean> day) {
         this.day = day;
     }
 

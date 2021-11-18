@@ -3,12 +3,17 @@ package com.example.donotpill;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 
@@ -20,10 +25,16 @@ public class Fragment_List extends Fragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private Adapter_Frag_List adapter_frag_list;
+    private FragmentManager fm;
+    private FragmentTransaction ft;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment__list, container, false);
+        fm= getActivity().getSupportFragmentManager();
+        ft=fm.beginTransaction();
+
         //RecyclerView
         recyclerView  = view.findViewById(R.id.rv_frag1);
         linearLayoutManager = new LinearLayoutManager(getContext());
@@ -52,5 +63,13 @@ public class Fragment_List extends Fragment {
     private ArrayList<Room> getRooms(){
         return ((MainActivity)getActivity()).getRooms();
     }
+    public void notifyDataChanged(){
+        adapter_frag_list.notifyDataSetChanged();
+    }
+    public void refresh(){
+        ft.detach(this).attach(this).commit();
+    }
+
+
 
 }

@@ -5,6 +5,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TimePicker;
@@ -56,16 +59,15 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Room> rooms;
     private FirebaseFirestore mstore;
     private FirebaseAuth mAuth;
-    private BottomSheetDialog addBottomSheetDialog;
+    private Dialog_AddBottomSheet addBottomSheetDialog;
     private SpinnerAdapter spinnerAdapter;
-    private Spinner spinner_time,spinner_dist;
-    int sel_time=0,sel_dist=0;
-    TimePicker timePicker;
     private AlarmManager alarmManager;
-    private int hour, minute;
     private LocationManager locationManager;
     private static final int REQUEST_CODE_LOCATION=2;
-
+    private FrameLayout main_frame;
+    private FragmentManager fm;
+    private FragmentTransaction ft;
+    private Fragment_List fragment_list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +94,13 @@ public class MainActivity extends AppCompatActivity {
         }
         spinnerAdapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, Collections.singletonList(spinner_items));
 
-
+        //프래그먼트 설정
+        main_frame = findViewById(R.id.lo_main);
+        fm = getSupportFragmentManager();
+        ft= fm.beginTransaction();
+        fragment_list = new Fragment_List();
+        ft.add(R.id.lo_main,fragment_list);
+        ft.commit();
 
     }
     @Override
@@ -106,29 +114,24 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.action_btn_add:
                 //TODO: 바텀씟
-                addBottomSheetDialog = new BottomSheetDialog(MainActivity.this,R.style.NewDialog);
+                addBottomSheetDialog = new Dialog_AddBottomSheet(MainActivity.this,R.style.NewDialog);
                 addBottomSheetDialog.setContentView(R.layout.dialog_addbottomsheet);
                 addBottomSheetDialog.setCanceledOnTouchOutside(true);
-                addBottomSheetDialog.show();
-
-                spinner_time = (Spinner) addBottomSheetDialog.findViewById(R.id.sp_time);
-                spinner_dist = (Spinner) addBottomSheetDialog.findViewById(R.id.sp_dist);
-                timePicker=addBottomSheetDialog.findViewById(R.id.tp_start);
-
-
-                set_Spinners();
-
-
-                //buttom complete
-                addBottomSheetDialog.findViewById(R.id.tv_confirm).setOnClickListener(new View.OnClickListener() {
+                addBottomSheetDialog.setOnButtonClickListener(new Dialog_AddBottomSheet.OnButtonClickListener() {
                     @Override
-                    public void onClick(View v) {
-
-                    regist();
-                    addBottomSheetDialog.dismiss();
-
+                    public void onConfirmClick(Room room) {
+                        reg_room(room);
+                        fragment_list.refresh();
+                        fragment_list.notifyDataChanged();
+                        addBottomSheetDialog.dismiss();
                     }
                 });
+                addBottomSheetDialog.show();
+
+
+
+
+
 
                 /*
                 addBottomSheetDialog.(new Dialog_AddBottomSheet.OnButtonClickListener() {
@@ -154,51 +157,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void set_Spinners(){
 
-        sel_time=0;
-        sel_dist=0;
-
-        ArrayList items_time = new ArrayList<>();
-        ArrayList items_dist = new ArrayList<>();
-
-        for(int i=1;i<=6;++i){
-            items_time.add(i*30) ;
-            items_dist.add(i*5);
-        }
-
-        ArrayAdapter<String> adapter_time = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items_time);
-        ArrayAdapter<String> adapter_dist = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items_dist);
-        // adapter.setDropDownViewResource(R.layout.spinner_item);
-
-        //spinner time set
-        spinner_time.setAdapter(adapter_time);
-        spinner_time.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                sel_time= (int) items_time.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        //spinner dist set
-        spinner_dist.setAdapter(adapter_dist);
-        spinner_dist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                sel_dist= (int) items_dist.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
 
     public ArrayList<Room> getRooms() {
         return rooms;
@@ -210,17 +169,22 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void regist() {
+    public void reg_room(Room room) {
 
         Intent intent = new Intent(this, Alarm.class);
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0,intent, 0);
-
+        int hour,minute;
+        rooms.add(room);
+        preferenceManager.setRooms(getApplicationContext(),mAuth.getUid(),rooms);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            hour=timePicker.getHour();
-            minute=timePicker.getMinute();
+            hour=room.getHour();
+            minute=room.getMin();
         }
-
+        else{
+            hour=0;
+            minute=0;
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
@@ -230,10 +194,9 @@ public class MainActivity extends AppCompatActivity {
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         // 지정한 시간에 매일 알림
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),  AlarmManager.INTERVAL_DAY, pIntent);
-
     }
 
-    public void unregist() {
+    public void unReg_room() {
         Intent intent = new Intent(this, Alarm.class);
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         alarmManager.cancel(pIntent);
@@ -276,10 +239,10 @@ public class MainActivity extends AppCompatActivity {
         min = Integer.parseInt(sdf.format(date));
         hour=hour*60+min;
 
-        boolean [] days= room.getDay();
+        ArrayList<Boolean> days= room.getDay();
         int mWeek = cal.get(Calendar.DAY_OF_WEEK);
         //요일다르면 우선 패스
-        if(!days[mWeek])return false;
+        if(!days.get(mWeek))return false;
         //시간범위안에 들어오면 on
         if(sTime<=hour && eTime>=hour){
             return true;

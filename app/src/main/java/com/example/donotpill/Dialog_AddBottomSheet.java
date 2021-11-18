@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -20,6 +22,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 public class Dialog_AddBottomSheet extends Dialog {
     private TimePicker tp_start;
     private EditText et_title;
@@ -29,6 +33,8 @@ public class Dialog_AddBottomSheet extends Dialog {
     private RadioButton rb_mon,rb_tue,rb_wed,rb_thu,rb_fri,rb_sat,rb_sun;
     private OnButtonClickListener listener;
     private FirebaseFirestore mStore;
+    int sel_time=0,sel_dist=0;
+
     public Dialog_AddBottomSheet(@NonNull Context context) {
         super(context);
     }
@@ -55,7 +61,7 @@ public class Dialog_AddBottomSheet extends Dialog {
         rb_sun=findViewById(R.id.rb_sun);
         tv_confirm=findViewById(R.id.tv_confirm);
         tv_cancle=findViewById(R.id.tv_cancle);
-
+        set_Spinners();
         tv_confirm.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -65,14 +71,14 @@ public class Dialog_AddBottomSheet extends Dialog {
                 int hour = tp_start.getHour();
                 int min = tp_start.getMinute();
                 int boundary = sp_time.getSelectedItemPosition()+1;
-                boolean [] day = new boolean[7];
-                day[0]=rb_mon.isChecked();
-                day[1]=rb_thu.isChecked();
-                day[2]=rb_wed.isChecked();
-                day[3]=rb_thu.isChecked();
-                day[4]=rb_fri.isChecked();
-                day[5]=rb_sat.isChecked();
-                day[6]=rb_sun.isChecked();
+                ArrayList<Boolean> day = new ArrayList<Boolean>();
+                day.add(0,rb_mon.isChecked());
+                day.add(1,rb_tue.isChecked());
+                day.add(2,rb_wed.isChecked());
+                day.add(3,rb_thu.isChecked());
+                day.add(4,rb_fri.isChecked());
+                day.add(5,rb_sat.isChecked());
+                day.add(6,rb_sun.isChecked());
                 int dist = sp_dist.getSelectedItemPosition()+1;
                 Room room = new Room(id,title,hour,min,boundary,day,dist,true);
                 mStore.collection("Rooms").document(id).set(room).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -96,5 +102,52 @@ public class Dialog_AddBottomSheet extends Dialog {
         void onConfirmClick(Room room);
     }
 
+
     public void setOnButtonClickListener(OnButtonClickListener listener){this.listener = listener;}
+
+    private void set_Spinners(){
+
+        sel_time=0;
+        sel_dist=0;
+
+        ArrayList items_time = new ArrayList<>();
+        ArrayList items_dist = new ArrayList<>();
+
+        for(int i=1;i<=6;++i){
+            items_time.add(i*30) ;
+            items_dist.add(i*5);
+        }
+
+        ArrayAdapter<String> adapter_time = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, items_time);
+        ArrayAdapter<String> adapter_dist = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, items_dist);
+        // adapter.setDropDownViewResource(R.layout.spinner_item);
+
+        //spinner time set
+        sp_time.setAdapter(adapter_time);
+        sp_time.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sel_time= (int) items_time.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        //spinner dist set
+        sp_time.setAdapter(adapter_dist);
+        sp_dist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sel_dist= (int) items_dist.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
 }

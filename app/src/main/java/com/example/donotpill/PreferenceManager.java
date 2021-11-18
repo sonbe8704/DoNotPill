@@ -33,6 +33,7 @@ public class PreferenceManager {
 
     }
 
+    //유저아이디 넣으면 알람방정보
     public void setRooms(Context context, String uid, ArrayList<Room> rooms){
 
         SharedPreferences prefs = getPreferences(context);
@@ -78,6 +79,7 @@ public class PreferenceManager {
         return rooms;
     }
 
+    //방정보 넣으면 내가 교류한 사람들 정보
     public void setRanking(Context context, String id_room, ArrayList<Other> others){
         SharedPreferences prefs = getPreferences(context);
 
